@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  </head>
+  <body>
+    <div id="root">
+      <!-- Replaced by the app as soon as it starts. Shown only if the app can't start. -->
+      <div
+        id="boot-message"
+        hidden
+        role="alert"
+        style="font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: var(--brand-ink, #2a2927); max-width: 34rem; margin: 18vh auto 0; padding: 0 24px; line-height: 1.6; text-align: center"
+      ></div>
+    </div>
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; padding: 24px; max-width: 32rem; margin: 0 auto">
+        This property showcase needs JavaScript to display listings, photos and maps. Please enable JavaScript and reload the page.
+      </p>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      // Explains a page that can't start instead of leaving it blank: opened as a local
+      // file, published without the build step, or a failed download.
+      (function () {
+        var local = location.protocol === 'file:';
+        var unbuilt = !!document.querySelector('script[src$="/src/main.tsx"]');
+        var devServer = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+        var misconfigured = unbuilt && !devServer && !local;
+        setTimeout(
+          function () {
+            var box = document.getElementById('boot-message');
+            if (!box) return; // the app is running
+            var title, detail, refresh = false;
+            if (local) {
+              title = 'This page can’t open as a file from your computer.';
+              detail = 'Open the site’s published web link instead. To preview the project on this computer, run “npm install” and then “npm run dev” in the project folder.';
+            } else if (misconfigured) {
+              title = 'This site isn’t published yet.';
+              detail = 'Site owner: in the GitHub repository, open Settings → Pages, set Source to “GitHub Actions”, then run the “Deploy to GitHub Pages” workflow.';
+            } else {
+              title = 'This page didn’t finish loading.';
+              detail = 'Check your internet connection and try again.';
+              refresh = true;
+            }
+            box.innerHTML =
+              '<p style="font-size:1.35rem;font-weight:600;margin:0 0 .5rem">' + title + '</p>' +
+              '<p style="margin:0;color:var(--brand-ink-muted,#5f5b54)">' + detail + '</p>' +
+              (refresh
+                ? '<button type="button" onclick="location.reload()" style="margin-top:1.5rem;font:inherit;font-weight:600;border:0;border-radius:999px;padding:.7rem 1.5rem;cursor:pointer;color:#fff;background:var(--brand-accent-strong,#4e5e48)">Try again</button>'
+                : '');
+            box.hidden = false;
+          },
+          local || misconfigured ? 1200 : 12000,
+        );
+      })();
+    </script>
+  </body>
+</html>
